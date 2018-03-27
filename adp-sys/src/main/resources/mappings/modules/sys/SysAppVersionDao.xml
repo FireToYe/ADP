@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.SysAppVersionDao">
+    
+	<sql id="sysAppVersionColumns">
+		a.appname AS "appname",
+		a.version AS "version",
+		a.uptime AS "uptime"
+	</sql>
+	
+	<sql id="sysAppVersionJoins">
+	</sql>
+    
+	<select id="get" resultType="SysAppVersion">
+		SELECT 
+			<include refid="sysAppVersionColumns"/>
+		FROM sys_app_version a
+		<include refid="sysAppVersionJoins"/>
+		WHERE a.appname = #{appname}
+	</select>
+	
+	<select id="findList" resultType="SysAppVersion">
+		SELECT 
+			<include refid="sysAppVersionColumns"/>
+		FROM sys_app_version a
+		<include refid="sysAppVersionJoins"/>
+		<where>
+			<if test="appname != null and appname != ''">
+				AND a.appname like CONCAT('%',#{appname},'%')
+		</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	
+	<select id="findAllList" resultType="SysAppVersion">
+		SELECT 
+			<include refid="sysAppVersionColumns"/>
+		FROM sys_app_version a
+		<include refid="sysAppVersionJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_app_version(
+			appname,
+			version,
+			uptime
+		) VALUES (
+			#{appname},
+			#{version},
+			now()
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_app_version SET 	
+			version = #{version},
+			uptime = now()
+		WHERE appname = #{appname}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_app_version
+		WHERE appname = #{appname}
+	</update>
+	
+	<select id="getAppname" resultType="SysAppVersion">
+		SELECT 
+			<include refid="sysAppVersionColumns"/>
+		FROM sys_app_version a
+		<include refid="sysAppVersionJoins"/>
+		WHERE a.appname = #{appname}
+		
+	</select>
+	
+</mapper>

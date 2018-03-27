@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.NewsDao">
+    
+	<sql id="newsColumns">
+		a.id AS "id",
+		a.subject AS "subject",
+		a.content AS "content",
+		a.click_count AS "clickCount",
+		a.attachment_id AS "attachmentId",
+		a.attachment_name AS "attachmentName",
+		a.type_id AS "typeId",
+		a.publish AS "publish",
+		a.top AS "top",
+		a.subject_color AS "subjectColor",
+		a.keyword AS "keyword",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_status AS "delStatus",
+		a.accepter_id AS "accepterId"
+	</sql>
+	
+	<sql id="newsJoins">
+	</sql>
+    
+	<select id="get" resultType="News">
+		SELECT 
+			<include refid="newsColumns"/>
+		FROM sys_news a
+		<include refid="newsJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="News">
+		SELECT 
+			<include refid="newsColumns"/>
+		FROM sys_news a
+		<include refid="newsJoins"/>
+		WHERE 1=1
+		<if test="publish != null and publish != ''">
+			AND a.publish =#{publish}
+		</if>
+		<if test="subject != null and subject != ''">
+			AND a.subject like 
+				<if test="dbName == 'oracle'">'%'||#{subject}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{subject}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{subject}, '%')</if>
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND a.keyword like 
+				<if test="dbName == 'oracle'">'%'||#{keyword}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{keyword}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword}, '%')</if>
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	<select id="count" resultType="int">
+		SELECT 
+			count(1)
+		FROM sys_news a
+		<include refid="newsJoins"/>
+		WHERE 1=1
+		<if test="subject != null and subject != ''">
+			AND a.subject like 
+				<if test="dbName == 'oracle'">'%'||#{subject}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{subject}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{subject}, '%')</if>
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND a.keyword like 
+				<if test="dbName == 'oracle'">'%'||#{keyword}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{keyword}+'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{keyword}, '%')</if>
+		</if>
+	</select>
+	<select id="findAllList" resultType="News">
+		SELECT 
+			<include refid="newsColumns"/>
+		FROM sys_news a
+		<include refid="newsJoins"/>
+		<where>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_news(
+			id,
+			subject,
+			content,
+			click_count,
+			attachment_id,
+			attachment_name,
+			type_id,
+			publish,
+			top,
+			subject_color,
+			keyword,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{id},
+			#{subject},
+			#{content},
+			#{clickCount},
+			#{attachmentId},
+			#{attachmentName},
+			#{typeId},
+			#{publish},
+			#{top},
+			#{subjectColor},
+			#{keyword},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_news SET 	
+		<if test="subject !=null">
+			subject = #{subject},
+		</if>
+		<if test="content !=null">
+			content = #{content},
+		</if>
+		<if test="clickCount !=0">
+			click_count = #{clickCount},
+		</if>
+		<if test="attachmentId !=null">
+			attachment_id = #{attachmentId},
+		</if>
+		<if test="attachmentName !=null">
+			attachment_name = #{attachmentName},
+		</if>
+		<if test="typeId !=null">
+			type_id = #{typeId},
+		</if>
+		<if test="publish !=null">
+			publish = #{publish},
+		</if>
+		<if test="top !=null">
+			top = #{top},
+		</if>
+		<if test="subjectColor !=null">
+			subject_color = #{subjectColor},
+		</if>
+		<if test="keyword !=null">
+			keyword = #{keyword},
+		</if>
+		<if test="accepterId !=null">
+			accepter_id  = #{accepterId},
+		</if>
+		<if test="delStatus !=null">
+			del_status  = #{delStatus},
+		</if>
+		<if test="id !=null and id != ''">
+			id = #{id},
+		</if>
+		update_by = #{updateBy.id},
+		update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="delete">
+		DELETE FROM sys_news
+		WHERE id = #{id}
+	</update>
+	<select id="notifyNum" resultType="int" parameterType="Map">
+		SELECT 
+			count(*)
+		FROM sys_news a
+		WHERE
+			a.publish = #{publish} and
+		 	a.accepter_id != #{userId}
+	</select>
+	
+</mapper>

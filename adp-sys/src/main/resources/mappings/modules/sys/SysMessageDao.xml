@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.SysMessageDao">
+    
+	<sql id="sysMessageColumns">
+		a.id AS "id",
+		a.accepter_id AS "accepterId",
+		a.type AS "type",
+		a.del_status AS "delStatus",
+		a.title AS "title",
+		a.content AS "content",
+		a.attachment_ids AS "attachmentIds",
+		a.attachment_names AS "attachmentNames",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.source_message_id AS "sourceMessageId",
+		u2.name AS "createBy.name"
+	</sql>
+	
+	
+	<sql id="sysMessageJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.accepter_id
+	</sql>
+	
+    <!--根据创建者的id去关联，主要是为了获取创建者的name-->
+    <sql id="sysMessageJoinsByCreater">
+    	LEFT JOIN sys_user u2 ON u2.id = a.create_by
+    </sql>
+	
+	<!--管理员查看消息状态的时候的字段-->
+	<sql id="sysMessageStatusColumns">
+		m.id AS "id",
+		m.accepter_id AS "accepterId",
+		m.type AS "type",
+		m.del_status AS "delStatus",
+		m.title AS "title",
+		m.content AS "content",
+		m.attachment_ids AS "attachmentIds",
+		m.attachment_names AS "attachmentNames",
+		m.create_by AS "createBy.id",
+		m.create_date AS "createDate",
+		m.update_by AS "updateBy.id",
+		m.update_date AS "updateDate",
+		m.source_message_id AS "sourceMessageId",
+		u.name AS "createBy.name",
+		su.name AS "user.name",
+		su.id AS "user.id",
+		su.company_id AS "compamy.id",
+		su.office_id AS "office.id",
+		c. NAME AS "company.name",
+		o. NAME AS "office.name"
+	</sql>
+	
+	<sql id="sysMessageStatusJoins">
+		LEFT JOIN sys_user su ON su.id = m.accepter_id
+		LEFT JOIN sys_user u ON u.id = m.create_By
+		LEFT JOIN sys_office c ON c.id = su.company_id
+		LEFT JOIN sys_office o ON o.id = su.office_id
+	</sql>
+    
+	<select id="get" resultType="SysMessage">
+		SELECT 
+			<include refid="sysMessageColumns"/>
+		FROM sys_message a
+		<include refid="sysMessageJoinsByCreater"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysMessage">
+		SELECT 
+			<include refid="sysMessageColumns"/>
+		FROM sys_message a
+		<include refid="sysMessageJoinsByCreater"/>
+		<where>
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+			<if test="delStatus != null and delStatus != ''">
+				AND a.del_status = #{delStatus}
+				
+			</if>
+			<if test="accepterId != null and accepterId != ''">
+				AND a.accepter_id = #{accepterId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	
+	<select id="findStatusList" resultType="SysMessage">
+		SELECT 
+			<include refid="sysMessageStatusColumns"/>
+		FROM sys_message m
+		<include refid="sysMessageStatusJoins"/>
+		<where>
+			<if test="delStatus != null and delStatus != ''">
+				AND m.del_status = ${delStatus}
+			</if>
+			<if test="sourceMessageId != null and sourceMessageId != ''">
+				AND m.source_message_id = ${sourceMessageId}
+			</if>
+			<if test="companyName != null and companyName != ''">
+				AND c.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{companyName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{companyName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{companyName},'%')</if>
+			</if>
+			<if test="officeName != null and officeName != ''">
+				AND o.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{officeName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{officeName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{officeName},'%')</if>
+			</if>
+			<if test="receiverName != null and receiverName != ''">
+				AND su.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{receiverName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{receiverName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{receiverName},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY m.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	
+	
+	<select id="findAllList" resultType="SysMessage">
+		SELECT 
+			<include refid="sysMessageColumns"/>
+		FROM sys_message a
+		<include refid="sysMessageJoinsByCreater"/>
+		<where>
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+			<if test="delStatus != null and delStatus != ''">
+				AND a.del_status = #{delStatus}
+			</if>
+			<if test="accepterId != null and accepterId != ''">
+				AND a.accepter_id = #{accepterId}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="notifyNum" resultType="int">
+		SELECT 
+			count(*)
+		FROM sys_message a
+		WHERE a.accepter_id = #{userId}
+		<if test="delStatus!=null and delStatus!=''">
+			 AND a.del_status = #{delStatus}
+		</if>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_message(
+			accepter_id,
+			type,
+			title,
+			content,
+			attachment_ids,
+			attachment_names,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			source_message_id
+		) VALUES (
+			#{accepterId},
+			#{type},
+			#{title},
+			#{content},
+			#{attachmentIds},
+			#{attachmentNames},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{sourceMessageId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_message SET 	
+			del_status = #{delStatus},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE 
+		<choose>
+			<when test="id != null and id != ''">
+				id = #{id} AND accepter_id = #{accepterId}
+			</when>
+			<otherwise>
+				accepter_id = #{accepterId}
+			</otherwise>
+		</choose>
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_message
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="batchDelete">  
+        DELETE FROM sys_message WHERE id IN
+        <foreach item="idItem" collection="array" open="(" separator="," close=")">  
+        	#{idItem}  
+        </foreach>  
+    </delete>
+	
+</mapper>

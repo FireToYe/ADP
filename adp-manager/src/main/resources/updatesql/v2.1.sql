@@ -1,0 +1,1 @@
+update `sys_app_version` set uptime=NOW() ;

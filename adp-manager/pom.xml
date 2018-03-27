@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>adp-manager</artifactId>
+	<parent>
+		<groupId>com.zhilink</groupId>
+		<artifactId>adp</artifactId>
+		<version>0.1.18-SNAPSHOT</version>
+	</parent>
+	<packaging>war</packaging>
+
+	<name>adp-manager</name>
+
+	<!-- 项目属性 -->
+	<properties>
+		<!-- environment setting -->
+		<jdk.version>1.8</jdk.version>
+	</properties> 
+
+	<!-- 依赖项定义 -->
+	<dependencies>
+	 <dependency>
+			<groupId>com.zhilink</groupId>
+			<artifactId>adp-sys</artifactId>
+			<version>0.1.18-SNAPSHOT</version>
+		</dependency>
+		 <dependency>
+			<groupId>com.zhilink</groupId>
+			<artifactId>adp-gen</artifactId>
+			<version>0.1.18-SNAPSHOT</version>
+		</dependency>
+<!-- 		<dependency>
+			<groupId>com.zhilink</groupId>
+			<artifactId>dc-ica</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zhilink</groupId>
+			<artifactId>adp-db</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency> -->
+	</dependencies>
+
+	<build>
+		<outputDirectory>${project.basedir}/src/main/webapp/WEB-INF/classes/</outputDirectory>
+		<plugins>
+		   <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.2</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		
+			<!-- Compiler 插件, 设定JDK版本 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+
+			<!-- JSP 预编译插件 jspweb.xml <plugin> <groupId>org.jasig.mojo.jspc</groupId> 
+				<artifactId>jspc-maven-plugin</artifactId> <version>2.0.0</version> <configuration> 
+				<injectString>&lt;!- - [INSERT FRAGMENT HERE] - -&gt;</injectString> </configuration> 
+				<executions> <execution> <goals> <goal>compile</goal> </goals> </execution> 
+				</executions> <dependencies> <dependency> <groupId>org.jasig.mojo.jspc</groupId> 
+				<artifactId>jspc-compiler-tomcat6</artifactId> <version>2.0.0</version> </dependency> 
+				</dependencies> </plugin> -->
+
+			<!-- Jetty JSP 预编译插件 web.xml <plugin> <groupId>org.mortbay.jetty</groupId> 
+				<artifactId>jetty-jspc-maven-plugin</artifactId> <version>${jetty.version}</version> 
+				<configuration> <insertionMarker>&lt;!- - [INSERT FRAGMENT HERE] - -&gt;</insertionMarker> 
+				</configuration> <executions> <execution> <goals> <goal>jspc</goal> </goals> 
+				</execution> </executions> </plugin> -->
+
+			<!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+				<!-- <executions> <execution> <phase>prepare-package</phase> <goals> 
+					<goal>jar</goal> </goals> <configuration> <classesDirectory>${project.outputDirectory}</classesDirectory> 
+					<finalName>zhilink</finalName> <outputDirectory>${project.build.directory}/${project.artifactId}/WEB-INF/lib</outputDirectory> 
+					<includes> <include>com/jaray/zhilink/**</include> </includes> </configuration> 
+					</execution> </executions> -->
+			</plugin>
+
+			<!-- 混淆代码 <plugin> <groupId>com.github.wvengen</groupId> <artifactId>proguard-maven-plugin</artifactId> 
+				<version>2.0.11</version> <executions> <execution> <phase>prepare-package</phase> 
+				<goals> <goal>proguard</goal> </goals> </execution> </executions> <configuration> 
+				<obfuscate>true</obfuscate> <options> <option>-injars ${project.build.directory}/${project.artifactId}/WEB-INF/lib/zhilink.jar</option> 
+				</options> <outjar>${project.artifactId}/WEB-INF/lib/zhilink_out.jar</outjar> 
+				<outputDirectory>${project.build.directory}</outputDirectory> <proguardInclude>${basedir}/proguard.cfg</proguardInclude> 
+				<source>${jdk.version}</source> <target>${jdk.version}</target> <encoding>${project.build.sourceEncoding}</encoding> 
+				<libs> <lib>${java.home}/lib/rt.jar</lib> <lib>${java.home}/lib/jsse.jar</lib> 
+				<lib>${java.home}/lib/jce.jar</lib> </libs> <addMavenDescriptor>false</addMavenDescriptor> 
+				</configuration> <dependencies> <dependency> <groupId>net.sf.proguard</groupId> 
+				<artifactId>proguard-base</artifactId> <version>4.9</version> <scope>runtime</scope> 
+				</dependency> </dependencies> </plugin> -->
+
+			<!-- war 打包插件, 设定war包名称不带版本号 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<!-- <overlays> <overlay> <groupId>com.zhilink</groupId> <artifactId>srm-sys</artifactId> 
+						<version>0.1.0-SNAPSHOT</version> </overlay> </overlays> -->
+					<packagingExcludes>
+						<!-- WEB-INF/classes/com/jaray/zhilink/** -->
+						WEB-INF/classes/org/apache/ibatis/**,
+						WEB-INF/classes/org/mybatis/spring/**
+					</packagingExcludes>
+					<warSourceExcludes>
+						static/bootstrap/2.3.1/docs/**,
+						static/ckeditor/_samples/**,
+						static/ckeditor/_source/**,
+						static/ckfinder/_samples/**,
+						static/ckfinder/help/**,
+						static/compressor*/**,
+						static/jquery-jbox/2.3/docs/**,
+						static/jquery-jbox/2.3/Skins2/**,
+						static/jquery-validation/1.11.0/demo/**,
+						static/jquery-ztree/3.5.12/demo/**,
+						static/My97DatePicker/docs/**,
+						static/supcan/doc/**,
+						static/SuperSlide/demo/**,
+						static/treeTable/demo/**<!-- , -->
+						<!-- userfiles/** --><!-- ,/**/*.jsp -->
+						,
+						test/**
+					</warSourceExcludes>
+					<webappDirectory>${project.build.directory}/${project.artifactId}</webappDirectory><!-- 
+						<webXml>${project.basedir}/target/jspweb.xml</webXml> -->
+					<warName>${project.artifactId}</warName>
+				</configuration>
+			</plugin>
+
+			<!-- Eclipse 插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>${downloadSources}</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+					<wtpversion>2.0</wtpversion>
+					<jeeversion>5.0</jeeversion>
+					<!-- <jeeversion>6.0</jeeversion> -->
+					<additionalConfig>
+						<file>
+							<name>.settings/org.eclipse.core.resources.prefs</name>
+							<content>
+								<![CDATA[eclipse.preferences.version=1${line.separator}encoding/<project>=${project.build.sourceEncoding}${line.separator}]]>
+							</content>
+						</file>
+					</additionalConfig>
+					<additionalProjectnatures>
+						<projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+					</additionalProjectnatures>
+				</configuration>
+			</plugin>
+
+			<!-- tomcat6插件 -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat6-maven-plugin</artifactId>
+				<version>${tomcat.version}</version>
+				<configuration>
+					<port>${webserver.port}</port>
+					<path>/${project.artifactId}</path>
+					<uriEncoding>${project.build.sourceEncoding}</uriEncoding>
+				</configuration>
+			</plugin>
+
+			<!-- tomcat7插件 -->
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>${tomcat.version}</version>
+				<configuration>
+					<port>${webserver.port}</port>
+					<path>/${project.artifactId}</path>
+					<uriEncoding>${project.build.sourceEncoding}</uriEncoding>
+				</configuration>
+			</plugin>
+
+			<!-- jetty插件 -->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<connectors>
+						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+							<port>${webserver.port}</port>
+						</connector>
+					</connectors>
+					<webAppConfig>
+						<contextPath>/${project.artifactId}</contextPath>
+					</webAppConfig>
+					<systemProperties>
+						<systemProperty>
+							<name>org.mortbay.util.URI.charset</name>
+							<value>${project.build.sourceEncoding}</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+
+			<!-- resource插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+			</plugin>
+
+			<!-- install插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+			</plugin>
+
+			<!-- clean插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.6.1</version>
+			</plugin>
+
+			<!-- ant插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+			</plugin>
+
+			<!-- dependency插件 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+					<include>**/*.ftl</include>
+					<include>**/*.html</include>
+					<include>**/*.tpl</include>
+					<include>**/*.json</include>
+					<include>**/*.sql</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+					<include>**/*.ftl</include>
+					<include>**/*.html</include>
+					<include>**/*.tpl</include>
+					<include>**/*.json</include>
+					<include>**/*.sql</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+
+	<profiles>
+		<!-- 初始化数据库 -->
+		<profile>
+			<id>init-db</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.dbunit</groupId>
+					<artifactId>dbunit</artifactId>
+					<version>2.4.8</version>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.poi</groupId>
+					<artifactId>poi</artifactId>
+					<version>3.2-FINAL</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<configuration>
+							<target>
+
+								<!-- mysql -->
+								<property name="dbunit.datatype"
+									value="org.dbunit.ext.mysql.MySqlDataTypeFactory" />
+
+								<!-- mssql <property name="dbunit.datatype" value="org.dbunit.ext.mssql.MsSqlDataTypeFactory" 
+									/> -->
+
+								<!-- oracle <property name="dbunit.datatype" value="org.dbunit.ext.oracle.Oracle10DataTypeFactory" 
+									/> -->
+
+								<property file="src/main/resources/zhilink.properties" />
+								<sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${jdbc.username}"
+									password="${jdbc.password}" onerror="continue"
+									encoding="${project.build.sourceEncoding}">
+									<classpath refid="maven.test.classpath" />
+									<transaction src="db/sys/zhilink_${jdbc.type}.sql" />
+									<transaction src="db/cms/zhilink_${jdbc.type}.sql" />
+									<transaction src="db/oa/zhilink_${jdbc.type}.sql" />
+									<transaction src="db/gen/zhilink_${jdbc.type}.sql" />
+									<transaction src="db/gen/example_${jdbc.type}.sql" />
+									<transaction src="db/test/zhilink_${jdbc.type}.sql" />
+									<transaction
+										src="db/act/drop/activiti.${jdbc.type}.drop.engine.sql" />
+									<transaction
+										src="db/act/drop/activiti.${jdbc.type}.drop.history.sql" />
+									<transaction
+										src="db/act/drop/activiti.${jdbc.type}.drop.identity.sql" />
+									<transaction
+										src="db/act/create/activiti.${jdbc.type}.create.engine.sql" />
+									<transaction
+										src="db/act/create/activiti.${jdbc.type}.create.history.sql" />
+									<transaction
+										src="db/act/create/activiti.${jdbc.type}.create.identity.sql" />
+								</sql>
+
+								<taskdef name="dbunit" classname="org.dbunit.ant.DbUnitTask"
+									classpathref="maven.test.classpath" />
+
+								<!-- mysql、mssql -->
+								<dbunit driver="${jdbc.driver}" url="${jdbc.url}" userid="${jdbc.username}"
+									password="${jdbc.password}">
+
+									<!-- oracle <dbunit driver="${jdbc.driver}" url="${jdbc.url}" userid="${jdbc.username}" 
+										password="${jdbc.password}" schema="${jdbc.username}" > -->
+
+									<dbconfig>
+										<property name="datatypeFactory" value="${dbunit.datatype}" />
+									</dbconfig>
+									<classpath refid="maven.test.classpath" />
+									<operation type="INSERT" src="db/sys/zhilink_data.xls"
+										format="xls" transaction="true" />
+									<operation type="INSERT" src="db/cms/zhilink_data.xls"
+										format="xls" transaction="true" />
+
+								</dbunit>
+
+							</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<!-- dev-adp -->
+		<profile>
+			<id>dev-adp</id>
+			<properties>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+		
+		<!-- dev-t100 -->
+		<profile>
+			<id>dev-t100</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<jdbc.url><![CDATA[jdbc:mysql://172.31.75.126:3306/srm?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true]]></jdbc.url>
+			  	<jdbc.username>zhilink</jdbc.username>  
+				<jdbc.password>r4l{qwSLxdjreiress6p</jdbc.password>
+				<!--druid连接池配置 -->
+				<druid.initialSize>10</druid.initialSize>
+				<druid.maxActive>1000</druid.maxActive>
+				<druid.minIdle>20</druid.minIdle>
+				<druid.maxWait>60000</druid.maxWait>
+				<druid.testOnBorrow>true</druid.testOnBorrow>
+				<druid.testWhileIdle>true</druid.testWhileIdle>
+				<druid.validationQuery>select 1</druid.validationQuery>
+				<druid.minEvictableIdleTimeMillis>30000</druid.minEvictableIdleTimeMillis>
+				<druid.timeBetweenEvictionRunsMillis>60000</druid.timeBetweenEvictionRunsMillis>
+				<druid.removeAbandoned>true</druid.removeAbandoned>
+				<druid.removeAbandonedTimeout>600</druid.removeAbandonedTimeout>
+				<druid.testOnReturn>false</druid.testOnReturn>
+				<druid.poolPreparedStatements>true</druid.poolPreparedStatements>
+				<druid.maxPoolPreparedStatementPerConnectionSize>100</druid.maxPoolPreparedStatementPerConnectionSize>
+
+				<!-- log4j日志目录 -->
+				<log.file.path>/opt/logs</log.file.path>
+				<log.root.level>INFO</log.root.level>
+				<log.level>INFO</log.level>
+				<log.additivity>false</log.additivity>
+				<log4.console.begin><![CDATA[<!-- ]]></log4.console.begin>
+				<log4.console.end><![CDATA[--> ]]></log4.console.end>
+				<!-- <icaPath>http://172.31.75.53:8080/ica/sysService/service</icaPath> -->
+				<icaPath>http://172.31.75.185:8084/srm-iccn/a/ica/api/service</icaPath>
+				<wmsUpload>http://172.31.75.143/wstopprd/ws/r/awsp920</wmsUpload>
+				<wmsAppPath>/opt/wms/app/</wmsAppPath>
+				<wmsAppDownload>http://172.31.75.184:10088/srm-manager/api/wms/download</wmsAppDownload>
+				<filePath>/opt/</filePath>
+				<start.update.version>N</start.update.version>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<!-- dev-t100 -->
+		<profile>
+			<id>dev-e10</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<jdbc.url><![CDATA[jdbc:mysql://172.31.75.126:3306/srm_e10?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true]]></jdbc.url>
+				<jdbc.username>zhilink</jdbc.username>
+				<jdbc.password>r4l{qwSLxdjreiress6p</jdbc.password>
+				<!--druid连接池配置 -->
+				<druid.initialSize>10</druid.initialSize>
+				<druid.maxActive>1000</druid.maxActive>
+				<druid.minIdle>20</druid.minIdle>
+				<druid.maxWait>60000</druid.maxWait>
+				<druid.testOnBorrow>true</druid.testOnBorrow>
+				<druid.testWhileIdle>true</druid.testWhileIdle>
+				<druid.validationQuery>select 1</druid.validationQuery>
+				<druid.minEvictableIdleTimeMillis>30000</druid.minEvictableIdleTimeMillis>
+				<druid.timeBetweenEvictionRunsMillis>60000</druid.timeBetweenEvictionRunsMillis>
+				<druid.removeAbandoned>true</druid.removeAbandoned>
+				<druid.removeAbandonedTimeout>600</druid.removeAbandonedTimeout>
+				<druid.testOnReturn>false</druid.testOnReturn>
+				<druid.poolPreparedStatements>true</druid.poolPreparedStatements>
+				<druid.maxPoolPreparedStatementPerConnectionSize>100</druid.maxPoolPreparedStatementPerConnectionSize>
+
+				<!-- log4j日志目录 -->
+				<log.file.path>/opt/logs</log.file.path>
+				<log.root.level>INFO</log.root.level>
+				<log.level>INFO</log.level>
+				<log.additivity>false</log.additivity>
+				<log4.console.begin><![CDATA[<!-- ]]></log4.console.begin>
+				<log4.console.end><![CDATA[--> ]]></log4.console.end>
+
+				<icaPath>http://172.31.75.185:8083/srm-iccn/a/ica/api/service</icaPath>
+				<wmsUpload>http://172.31.75.149:8112/Restful/invokeSrv</wmsUpload>
+				<wmsAppPath>/opt/wms/app/</wmsAppPath>
+				<wmsAppDownload>http://172.31.75.184:10091/srm-manager/api/wms/download</wmsAppDownload>
+				<filePath>/opt/</filePath>
+				<start.update.version>N</start.update.version>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+
+		<profile>
+			<id>dev-yf</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<jdbc.url><![CDATA[jdbc:mysql://172.31.75.126:3306/srm_yf?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true]]></jdbc.url>
+				<jdbc.username>zhilink</jdbc.username>
+				<jdbc.password>r4l{qwSLxdjreiress6p</jdbc.password>
+				<!--druid连接池配置 -->
+				<druid.initialSize>10</druid.initialSize>
+				<druid.maxActive>1000</druid.maxActive>
+				<druid.minIdle>20</druid.minIdle>
+				<druid.maxWait>60000</druid.maxWait>
+				<druid.testOnBorrow>true</druid.testOnBorrow>
+				<druid.testWhileIdle>true</druid.testWhileIdle>
+				<druid.validationQuery>select 1</druid.validationQuery>
+				<druid.minEvictableIdleTimeMillis>30000</druid.minEvictableIdleTimeMillis>
+				<druid.timeBetweenEvictionRunsMillis>60000</druid.timeBetweenEvictionRunsMillis>
+				<druid.removeAbandoned>true</druid.removeAbandoned>
+				<druid.removeAbandonedTimeout>600</druid.removeAbandonedTimeout>
+				<druid.testOnReturn>false</druid.testOnReturn>
+				<druid.poolPreparedStatements>true</druid.poolPreparedStatements>
+				<druid.maxPoolPreparedStatementPerConnectionSize>100</druid.maxPoolPreparedStatementPerConnectionSize>
+
+				<!-- log4j日志目录 -->
+				<log.file.path>/opt/logs</log.file.path>
+				<log.root.level>INFO</log.root.level>
+				<log.level>INFO</log.level>
+				<log.additivity>false</log.additivity>
+				<log4.console.begin><![CDATA[<!-- ]]></log4.console.begin>
+				<log4.console.end><![CDATA[--> ]]></log4.console.end>
+				<icaPath>http://172.31.75.185:8082/srm-iccn/a/ica/api/service</icaPath>
+				<wmsUpload>http://172.31.75.162:8085/TServerMethods/YiFeiILS</wmsUpload>
+				<wmsAppPath>/opt/wms/app/</wmsAppPath>
+				<wmsAppDownload>http://172.31.75.184:10092/srm-manager/api/wms/download</wmsAppDownload>
+				<filePath>/opt/</filePath>
+				<start.update.version>N</start.update.version>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+
+
+		<!-- 内网测试1环境配置 -->
+		<profile>
+			<id>inside-test</id>
+			<properties>
+				<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+				<jdbc.url><![CDATA[jdbc:mysql://172.31.75.108:3306/srm?useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true]]></jdbc.url>
+				<jdbc.username>test</jdbc.username>
+				<jdbc.password>test</jdbc.password>
+				<!--druid连接池配置 -->
+				<druid.initialSize>10</druid.initialSize>
+				<druid.maxActive>1000</druid.maxActive>
+				<druid.minIdle>20</druid.minIdle>
+				<druid.maxWait>60000</druid.maxWait>
+				<druid.testOnBorrow>true</druid.testOnBorrow>
+				<druid.testWhileIdle>true</druid.testWhileIdle>
+				<druid.validationQuery>select 1</druid.validationQuery>
+				<druid.minEvictableIdleTimeMillis>30000</druid.minEvictableIdleTimeMillis>
+				<druid.timeBetweenEvictionRunsMillis>60000</druid.timeBetweenEvictionRunsMillis>
+				<druid.removeAbandoned>true</druid.removeAbandoned>
+				<druid.removeAbandonedTimeout>600</druid.removeAbandonedTimeout>
+				<druid.testOnReturn>false</druid.testOnReturn>
+				<druid.poolPreparedStatements>true</druid.poolPreparedStatements>
+				<druid.maxPoolPreparedStatementPerConnectionSize>100</druid.maxPoolPreparedStatementPerConnectionSize>
+
+				<!-- log4j日志目录 -->
+				<log.file.path>/opt/logs</log.file.path>
+				<log.root.level>INFO</log.root.level>
+				<log.level>INFO</log.level>
+				<log.additivity>false</log.additivity>
+				<log4.console.begin><![CDATA[<!-- ]]></log4.console.begin>
+				<log4.console.end><![CDATA[--> ]]></log4.console.end>
+				<icaPath>http://172.31.75.53:8080/ica/sysService/service</icaPath>
+				<filePath>/opt/</filePath>
+				<start.update.version>N</start.update.version>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+		</profile>
+
+
+
+	</profiles>
+
+</project>

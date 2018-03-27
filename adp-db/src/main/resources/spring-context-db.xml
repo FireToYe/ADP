@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-4.1.xsd"
+	default-lazy-init="true">
+    <description>db Configuration</description>
+    
+    <!-- 配置文件外化 -->
+	<bean id="propertiesHolder" class="com.zhilink.manager.common.config.PropertiesHolder">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="localOverride" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:zhilink.properties</value>
+			</list>
+		</property>
+	</bean>
+	 
+    <!-- 测试用 begin -->
+    <!-- <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close"> 
+	    <property name="driverClassName" value="com.mysql.jdbc.Driver" />	    
+		<property name="url" value="jdbc:mysql://172.31.75.126:3306/adp?useUnicode=true&amp;characterEncoding=utf-8" />
+		<property name="username" value="zhilink" />
+		<property name="password" value="r4l{qwSLxdjreiress6p" />		
+	</bean>	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean> -->
+	<!-- 测试用 end -->
+	
+	<bean id="backupService" class="com.zhilink.srm.manager.modules.db.service.BackupService" init-method="init">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+ 		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />  
+    	<property name="mysqlPath" value="" />
+    	<property name="exportPath" value="" />
+    </bean>
+    
+</beans>

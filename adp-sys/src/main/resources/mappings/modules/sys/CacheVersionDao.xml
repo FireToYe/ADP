@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.CacheVersionDao">
+    
+	<select id="getVersionByName" resultType="CacheVersion">
+		SELECT 
+			* 
+		FROM sys_cache_version 
+		WHERE name = #{cacheName}
+	</select>
+	 
+	 <select id="getVersionList" resultType="CacheVersion">
+		SELECT 
+			* 
+		FROM sys_cache_version  
+	</select>
+	<update id="updateVersion">
+		UPDATE sys_cache_version SET 
+			version = #{version}  
+		WHERE name = #{cacheName}
+	</update>
+	
+	 
+	
+</mapper>

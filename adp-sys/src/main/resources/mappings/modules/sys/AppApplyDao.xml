@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.AppApplyDao">
+    
+	<sql id="appApplyColumns">
+		a.open_id AS "openId",
+		a.app_id AS "appId",
+		a.apply_info AS "applyInfo",
+		a.status AS "status",
+		a.remarks AS "remarks",
+		a.relate_user as "relateUser",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="appApplyJoins">
+	</sql>
+    
+	<select id="get" resultType="AppApply">
+		SELECT 
+			<include refid="appApplyColumns"/>
+		FROM sys_app_apply a
+		<include refid="appApplyJoins"/>
+		WHERE a.open_id = #{openId}
+	</select>
+	<select id="selectByRelateUser" resultType="AppApply">
+		SELECT 
+			<include refid="appApplyColumns"/>
+		FROM sys_app_apply a,sys_app_list b
+		<include refid="appApplyJoins"/>
+		WHERE  a.del_flag = '0' and a.app_id = b.app_id and b.app_type = '4'
+		 and a.relate_user=#{relateUser} limit 1
+	</select>
+	<select id="findList" resultType="AppApply">
+		SELECT 
+			<include refid="appApplyColumns"/>
+		FROM sys_app_apply a
+		<include refid="appApplyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="appId != null and appId != ''">
+				AND a.app_id = #{appId}
+			</if>
+			<if test="status != null and status != ''">
+				AND a.status = #{status}
+			</if>
+			<if test="applyInfoSearch !=null and applyInfoSearch.size()>0">
+		        <foreach collection="applyInfoSearch" item="search" index="index" open="" close="" separator=" ">
+		            AND a.apply_info like '%${search}%' 
+		        </foreach>
+		    </if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="AppApply">
+		SELECT 
+			<include refid="appApplyColumns"/>
+		FROM sys_app_apply a
+		<include refid="appApplyJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_app_apply(
+			open_id,
+			app_id,
+			apply_info,
+			status,
+			remarks,
+			relate_user,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{openId},
+			#{appId},
+			#{applyInfo},
+			#{status},
+			#{remarks},
+			#{relateUser},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="updateStatus">
+		UPDATE sys_app_apply SET 	
+			status = #{status},
+			update_date=now(),
+			update_by=#{updateBy.id},
+			remarks = #{remarks},
+			relate_user = #{relateUser}
+		WHERE open_id = #{openId}
+	</update>
+	
+	<update id="update">
+		UPDATE sys_app_apply SET 	
+			open_id = #{openId},
+			app_id = #{appId},
+			apply_info = #{applyInfo},
+			status = #{status},
+			remarks = #{remarks},
+			relate_user = #{relateUser},
+			update_by=#{updateBy.id},
+			update_date=now()
+	WHERE open_id = #{openId}
+	</update>
+	
+	<update id="updateApply">
+		UPDATE sys_app_apply SET 	
+			open_id = #{openId},
+			app_id = #{appId},
+			apply_info = #{applyInfo},
+			status = #{status},
+			remarks = #{remarks},
+			relate_user = #{relateUser},
+			update_by=#{updateBy.id},
+			update_date=now(),
+			del_flag = #{delFlag}
+	WHERE open_id = #{openId}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_app_apply SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE open_id = #{openId}
+	</update>
+	
+	<delete id="deleteByPhy">
+		delete from sys_app_apply
+		WHERE open_id = #{openId}
+	</delete>
+</mapper>

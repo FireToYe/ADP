@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.SysExtendWordDao">
+    
+	<sql id="extendWordColumns">
+		e.id AS "id",
+		e.name AS "name",
+		e.display_name AS "displayName",
+		e.type AS "type",
+		e.sort AS "sort",
+		e.key AS "key",
+		e.remarks AS "remarks",
+		e.comments AS "comments",
+		e.create_by AS "createBy.id",
+		e.create_date AS "createDate",
+		e.update_by AS "updateBy.id",
+		e.update_date AS "updateDate",
+		e.del_flag AS "delFlag",
+		e.display_name_CN AS "displayNameCN",
+		e.display_name_TW AS "displayNameTW",
+		e.display_name_UN AS "displayNameUN"
+	</sql>
+	
+	<select id="get" resultType="SysExtendWord">
+		SELECT 
+			<include refid="extendWordColumns"/>
+		FROM sys_extend_word e
+		WHERE e.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysExtendWord">
+		SELECT 
+			<include refid="extendWordColumns" />
+		FROM sys_extend_word e
+		WHERE 
+			del_flag = #{delFlag}
+		<if test="id != null and id != '' ">
+			AND e.id = #{id}
+		</if>
+		<if test="key != null and key != '' ">
+			AND e.key = #{key}
+		</if>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY `key`, e.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id ="findKeyList" resultType="SysExtendWord">
+		SELECT
+			e.`key` AS "key",e.comments AS "comments"
+		FROM sys_extend_word e
+		GROUP BY `key`
+		ORDER BY `key`
+	</select>
+	
+	<select id = "existSameData" resultType="int">
+		SELECT
+			count(id)
+		FROM sys_extend_word e
+		WHERE 
+			e.key = #{key}
+		AND e.name = #{name}
+		AND e.id != #{id}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_extend_word(
+			name,
+			display_name,
+			type,
+			sort,
+			`key`,
+			comments,
+			remarks,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag )
+		VALUES (
+			#{name},
+			#{displayName},
+			#{type},
+			#{sort},
+			#{key},
+			#{comments},
+			#{remarks},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	<update id="update">
+		UPDATE sys_extend_word SET
+			name = #{name},
+			display_name =#{displayName},
+			type = #{type},
+			sort = #{sort},
+			`key` = #{key},
+			remarks = #{remarks},
+			create_by = #{createBy.id},
+			create_date = #{createDate},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			del_flag = #{delFlag}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM sys_extend_word
+		WHERE id = #{id}
+	</delete>
+</mapper>

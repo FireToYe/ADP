@@ -1,0 +1,31 @@
+#left,#right,#openClose {
+	float:left;
+}
+.modal-office-body{
+	    padding: 10px 15px 15px 10px;
+}
+#tree li{
+	padding: 5px 8px;
+}
+.tree-modal{
+ height:500px; overflow-y:scroll ;
+}
+.navbar-static-top{
+	min-height: 50px;
+	background-color: #45aeea;
+	background-image: linear-gradient(to bottom,#54b4eb,#2fa4e7);
+	background-repeat: repeat-x;
+	border: 1px solid #1990d5;	
+}
+.icons-box{
+	 height:700px; overflow-y:scroll ;
+}
+.fontawesome-icon-list .fa-hover .clicked{
+    background-color: #1d9d74;
+    color: #ffffff;
+    text-decoration: none;
+}
+.nav-second-level{
+    margin: 0 1px;
+    background: #2c3b41;
+}

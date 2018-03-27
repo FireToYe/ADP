@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.SysPropertiesDao">
+    
+	<sql id="sysPropertiesColumns">
+		a.id AS "id",
+		a.pro_key AS "key",
+		a.pro_value AS "value",
+		a.modify_by AS "modifyBy",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="sysPropertiesJoins">
+	</sql>
+    
+	<select id="get" resultType="SysProperties">
+		SELECT 
+			<include refid="sysPropertiesColumns"/>
+		FROM sys_properties a
+		<include refid="sysPropertiesJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="checkOnly" resultType="SysProperties">
+		SELECT 
+			<include refid="sysPropertiesColumns"/>
+		FROM sys_properties a
+		<include refid="sysPropertiesJoins"/>
+		where 1 = 1
+		<if test="id != null and ''!=id">
+			and a.id != #{id}
+		</if>
+		<if test="key != null and ''!=key">
+			and a.pro_key = #{key}
+		</if>
+		limit 1
+	</select>
+	<select id="findList" resultType="SysProperties">
+		SELECT 
+			<include refid="sysPropertiesColumns"/>
+		FROM sys_properties a
+		<include refid="sysPropertiesJoins"/>
+		<where>
+						<if test="key != null and key != ''">
+				AND a.pro_key LIKE 
+					<if test="dbName == 'oracle'">'%'||#{key}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{key}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{key},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysProperties">
+		SELECT 
+			<include refid="sysPropertiesColumns"/>
+		FROM sys_properties a
+		<include refid="sysPropertiesJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_properties(
+			id,
+			pro_key,
+			pro_value,
+			modify_by,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{id},
+			#{key},
+			#{value},
+			#{modifyBy},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_properties SET 	
+			pro_key = #{key},
+			pro_value = #{value},
+			modify_by = #{modifyBy},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_properties
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

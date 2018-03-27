@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.SysMessageSendDao">
+    
+	<sql id="sysMessageSendColumns">
+		a.id AS "id",
+		a.title AS "title",
+		a.content AS "content",
+		a.attachment_ids AS "attachmentIds",
+		a.attachment_names AS "attachmentNames",
+		a.target AS "target",
+		a.count AS "count",
+		a.status AS "status",
+		a.receivers AS "receivers",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="sysMessageSendJoins">
+	</sql>
+    
+	<select id="get" resultType="SysMessageSend">
+		SELECT 
+			<include refid="sysMessageSendColumns"/>
+		FROM sys_message_send a
+		<include refid="sysMessageSendJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysMessageSend">
+		SELECT 
+			<include refid="sysMessageSendColumns"/>
+		FROM sys_message_send a
+		<include refid="sysMessageSendJoins"/>
+		<where>
+			
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+			<if test="createBy != null and createBy != ''">
+				AND a.create_by =  #{createBy.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysMessageSend">
+		SELECT 
+			<include refid="sysMessageSendColumns"/>
+		FROM sys_message_send a
+		<include refid="sysMessageSendJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert" parameterType="com.zhilink.srm.manager.modules.sys.entity.SysMessageSend"  keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO sys_message_send(
+			title,
+			content,
+			attachment_ids,
+			attachment_names,
+			target,
+			count,
+			type,
+			receivers,
+			create_by,
+			create_date,
+			update_by,
+			update_date
+		) VALUES (
+			#{title},
+			#{content},
+			#{attachmentIds},
+			#{attachmentNames},
+			#{target},
+			#{count},
+			#{type},
+			#{receivers},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_message_send SET 	
+			title = #{title},
+			content = #{content},
+			target = #{target},
+			count = #{count},
+			status = #{status},
+			receivers = #{receivers},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM sys_message_send
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

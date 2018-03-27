@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.db.dao.DbBackupSchemeDao">
+    
+	<sql id="dbBackupSchemeColumns">
+		a.id AS "id",
+		a.scheme_name AS "schemeName",
+		a.backup_tables AS "backupTables",
+		a.extend AS "extend",
+		a.cron_expression AS "cronExpression",
+		a.job_id AS "jobId",
+		a.job_status AS "jobStatus",
+		a.remarks AS "remarks",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.save_count AS "saveCount",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="dbBackupSchemeJoins">
+	</sql>
+    
+	<select id="get" resultType="DbBackupScheme">
+		SELECT 
+			<include refid="dbBackupSchemeColumns"/>
+		FROM db_backup_scheme a
+		<include refid="dbBackupSchemeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DbBackupScheme">
+		SELECT 
+			<include refid="dbBackupSchemeColumns"/>
+		FROM db_backup_scheme a
+		<include refid="dbBackupSchemeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DbBackupScheme">
+		SELECT 
+			<include refid="dbBackupSchemeColumns"/>
+		FROM db_backup_scheme a
+		<include refid="dbBackupSchemeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+		<select id="checkOnly" resultType="DbBackupScheme">
+		SELECT 
+			<include refid="dbBackupSchemeColumns"/>
+		FROM db_backup_scheme a
+		<include refid="dbBackupSchemeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test = "id != null and '' != id">
+				AND a.id != #{id}
+			</if>
+			<if test = "schemeName != null and '' != schemeName">
+				AND a.scheme_name = #{schemeName}
+			</if>
+		</where>
+		limit 1
+	</select>
+	<insert id="insert">
+		INSERT INTO db_backup_scheme(
+			id,
+			scheme_name,
+			backup_tables,
+			extend,
+			cron_expression,
+			job_id,
+			job_status,
+			remarks,
+			save_count,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag
+		) VALUES (
+			#{id},
+			#{schemeName},
+			#{backupTables},
+			#{extend},
+			#{cronExpression},
+			#{jobId},
+			#{jobStatus},
+			#{remarks},
+			${saveCount},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE db_backup_scheme SET 	
+			scheme_name = #{schemeName},
+			backup_tables = #{backupTables},
+			extend = #{extend},
+			cron_expression = #{cronExpression},
+			job_id = #{jobId},
+			job_status = #{jobStatus},
+			remarks = #{remarks},
+			save_count = #{saveCount},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE db_backup_scheme SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

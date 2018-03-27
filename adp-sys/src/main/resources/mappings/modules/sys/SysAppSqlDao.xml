@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.srm.manager.modules.sys.dao.SysAppSqlDao">
+    
+	<sql id="sysAppSqlColumns">
+		a.id AS "id",
+		a.appname AS "appname",
+		a.version AS "version",
+		a.sqltext AS "sqltext",
+		a.rollbacktext AS "rollbacktext",
+		a.sqlerror AS "sqlerror"
+	</sql>
+	
+	<sql id="sysAppSqlJoins">
+	</sql>
+    
+	<select id="get" resultType="SysAppSql">
+		SELECT 
+			<include refid="sysAppSqlColumns"/>
+		FROM sys_app_sql a
+		<include refid="sysAppSqlJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysAppSql">
+		SELECT 
+			<include refid="sysAppSqlColumns"/>
+		FROM sys_app_sql a
+		<include refid="sysAppSqlJoins"/>
+		<where>
+			<if test="appname != null and appname != ''">
+				AND a.appname like CONCAT('%',#{appname},'%')
+			</if>
+			<if test="version != null and version != ''">
+				AND a.version like CONCAT('%',#{version},'%')
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SysAppSql">
+		SELECT 
+			<include refid="sysAppSqlColumns"/>
+		FROM sys_app_sql a
+		<include refid="sysAppSqlJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_app_sql(
+			id,
+			appname,
+			version,
+			sqltext,
+			rollbacktext,
+			sqlerror
+		) VALUES (
+			#{id},
+			#{appname},
+			#{version},
+			#{sqltext},
+			#{rollbacktext},
+			#{sqlerror}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_app_sql SET 	
+			appname = #{appname},
+			version = #{version},
+			sqltext = #{sqltext},
+			rollbacktext = #{rollbacktext},
+			sqlerror = #{sqlerror}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateErrorSql">
+		UPDATE sys_app_sql SET 	
+			sqlerror = ''
+		WHERE id = #{id}
+	</update>
+		
+	<update id="delete">
+		DELETE FROM sys_app_sql
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

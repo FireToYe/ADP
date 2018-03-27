@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.zhilink</groupId>
+		<artifactId>adp</artifactId>
+		<version>0.1.18-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>adp-db</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>adp-db</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<adp.version>0.1.16-SNAPSHOT</adp.version>
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.zhilink</groupId>
+			<artifactId>adp-sys</artifactId>
+			<version>${adp.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.zhilink</groupId>
+			<artifactId>dc-schedule</artifactId>
+			<version>0.1.9-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+  
+</project>

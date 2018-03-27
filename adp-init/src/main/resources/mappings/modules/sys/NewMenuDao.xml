@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhilink.sys.manager.dao.NewMenuDao">
+
+	<sql id="menuColumns">
+		a.id,
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parent.ids",
+		a.name,
+		a.href,
+		a.target,
+		a.icon,
+		a.sort,
+		a.is_show,
+		a.permission,
+		a.remarks,
+		a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS
+		"updateBy.id",
+		a.update_date,
+		a.del_flag,
+		a.code,
+		a.menu_type,
+		a.new_id,
+		a.new_parent_id,
+		a.new_parent_ids,
+		p.name AS "parent.name",
+		p.new_id AS "parent.newId",
+		p.new_parent_id AS "parent.newParentId",
+		p.new_parent_ids AS "parent.newParentIds"
+	</sql>
+
+	<sql id="menuJoins">
+		LEFT JOIN sys_menu p ON p.id = a.parent_id
+	</sql>
+
+	<select id="findByParentId" resultType="com.zhilink.sys.manager.entity.NewMenu">
+		SELECT
+		<include refid="menuColumns" />
+		FROM sys_menu a
+		<include refid="menuJoins" />
+		WHERE a.parent_id = #{parentId}
+	</select>
+
+	<update id="updateNewId">
+		UPDATE sys_menu SET
+		new_id=#{newId},new_parent_id=#{newParentId},new_parent_ids=#{newParentIds}
+		WHERE id=#{id}
+	</update>
+</mapper>
